@@ -1,0 +1,19 @@
+{
+  "name": "ghostbot",
+  "version": "1.0.0",
+  "description": "discord bot for playing the text-based word-making game ghost",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Patrick Steppan",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "mocha": "^9.0.1",
+    "typescript": "^4.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4"
+  }
+}
