@@ -2,6 +2,7 @@ const dict = require('./dict.json');
 const TrieNode = require('./Trie');
 const assert = require('assert');
 const {performance} = require('perf_hooks');
+const { StateMachine, State } = require('./StateMachine');
 
 
 describe('Trie', () => {
@@ -118,3 +119,22 @@ const charCodesFromString = (str) => {
 const char = (str) => {
     return str.charCodeAt(0);
 }
+
+describe('StateMachine', () => {
+    describe('.addTransition', () => {
+        it('transitions from one state to another when called with the correct event', () => {
+            const machine = new StateMachine();
+            const stateA = new State();
+            const stateB = new State();
+
+            machine.activeState = stateA;
+            machine.addStateTransition("start", stateA, stateB);
+
+            machine.transition("start");
+
+            assert.ok(machine.activeState === stateB);
+        })
+
+        
+    })
+})

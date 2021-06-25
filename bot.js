@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const {token, prefix} = require('./config.json');
 const client = new Discord.Client();
+const TrieNode = require('./Trie');
+const dictionary = require('./dict.json');
 client.login(token);
 
 
@@ -22,6 +24,8 @@ class State {
         this.word = "";
         this.currentState="IN_SETUP";
         this.currentPlayer=-1;
+        this.trie = new TrieNode();
+        dictionary.forEach(word => this.trie.addWord(word["word"]));
     }
 
     getStatus() {
@@ -63,6 +67,11 @@ class State {
             return true;
         }
         return false;
+    }
+
+    checkIfWordIsValid(word)
+    {
+        return this.trie.contains(word);
     }
 }
 
@@ -130,12 +139,22 @@ client.on('message', (msg) => {
                     msg.channel.send('That isn\'t a valid word.');
                 }
             break;
+            case "checkword":
+                const word = args[0].toLowerCase();
+                const isValid = state.checkIfWordIsValid(word);
+                msg.channel.send(`${word.toUpperCase()} ${isValid ? "is" : "isn't"} a valid word.`)
+            break;
             case "kill":
                 msg.channel.send("Oh... ok. Bye...");
                 state.reset();
             break;
             case "ghost,attack!":
                 msg.channel.send("Not very effective, idiot");
+            break;
+            case "join":
+                const user = msg.author.username;
+                state.addPlayer([user]);
+                msg.channel.send(msg.author.username + " joined.");
             break;
         }
     }
