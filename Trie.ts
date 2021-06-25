@@ -43,6 +43,33 @@ class TrieNode {
         }
     }
 
+    wordsStartingWith(prefix: string) : Array<string>{
+        if(prefix == ""){
+            let childrensSuffixes = [];
+            if(this.children.size > 0){
+                this.children.forEach((v, k) => {
+                    childrensSuffixes = childrensSuffixes
+                        .concat(v.wordsStartingWith("")
+                        .map(substring => String.fromCharCode(k) + substring));
+                })
+            } else {
+                childrensSuffixes.push("");
+            }
+            return childrensSuffixes;
+        }
+        else {
+            const firstChar = prefix.charCodeAt(0);
+            if(this.children.has(firstChar)){
+                return this.children
+                        .get(firstChar)
+                        .wordsStartingWith(prefix.substring(1))
+                        .map(substring => prefix.charAt(0) + substring);
+            } else {
+                return [];
+            }
+        }
+    }
+
     print() {
         console.log(this.toString());
         this.children.forEach((v: TrieNode, k: number) => {

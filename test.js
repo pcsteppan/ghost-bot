@@ -76,8 +76,6 @@ describe('Trie', () => {
                 head.addWord(word["word"]);
             })
             const t1 = performance.now();
-            
-            console.log("adding all the words in dict.json takes " + ( t1-t0 ) + " ms.")
 
         });
     });
@@ -91,11 +89,25 @@ describe('Trie', () => {
 
         it('returns false for strings contained in the trie that are not words', () => {
             head.addWord('cats');
-            head.print();
+
             assert.ok(!(head.contains('cat')));
         });
     })
 
+    describe('.wordsStartingWith', () => {
+        it('returns the correct words that start with a given prefix', () => {
+            head.addWord('cots');
+            head.addWord('dogs');
+            head.addWord('core');
+            head.addWord('colder');
+            head.addWord('callous');
+            head.addWord('continuity');
+
+            const wordsStartingWithC = head.wordsStartingWith('co');
+
+            assert.ok(head.wordsStartingWith('co').length === 4);
+        })
+    })
 
 });
 

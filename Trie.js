@@ -36,6 +36,34 @@ var TrieNode = /** @class */ (function () {
             return false;
         }
     };
+    TrieNode.prototype.wordsStartingWith = function (prefix) {
+        if (prefix == "") {
+            var childrensSuffixes_1 = [];
+            if (this.children.size > 0) {
+                this.children.forEach(function (v, k) {
+                    childrensSuffixes_1 = childrensSuffixes_1
+                        .concat(v.wordsStartingWith("")
+                        .map(function (substring) { return String.fromCharCode(k) + substring; }));
+                });
+            }
+            else {
+                childrensSuffixes_1.push("");
+            }
+            return childrensSuffixes_1;
+        }
+        else {
+            var firstChar = prefix.charCodeAt(0);
+            if (this.children.has(firstChar)) {
+                return this.children
+                    .get(firstChar)
+                    .wordsStartingWith(prefix.substring(1))
+                    .map(function (substring) { return prefix.charAt(0) + substring; });
+            }
+            else {
+                return [];
+            }
+        }
+    };
     TrieNode.prototype.print = function () {
         var _this = this;
         console.log(this.toString());
