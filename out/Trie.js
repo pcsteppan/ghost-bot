@@ -78,4 +78,4 @@ var TrieNode = /** @class */ (function () {
     TrieNode.trieNodeCount = 0;
     return TrieNode;
 }());
-module.exports = TrieNode;
+exports["default"] = TrieNode;

@@ -1,5 +1,3 @@
-import { transpileModule } from "typescript";
-
 class TrieNode {
     static trieNodeCount: number = 0;
     id: number;
@@ -83,4 +81,4 @@ class TrieNode {
     }
 }
 
-module.exports = TrieNode;
+export default TrieNode;
