@@ -182,7 +182,10 @@ client.on('message', function (msg) {
         if (!msg.content.startsWith(prefix) || msg.author.bot)
             return;
         var args = msg.content.slice(prefix.length).trim().split(' ');
-        var command = args.shift().toLowerCase();
+        var firstArg = args.shift();
+        var command = (firstArg !== undefined)
+            ? firstArg
+            : "";
         console.log("Command: ", command);
         console.log("Args: ", args);
         // primary commands

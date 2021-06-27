@@ -12,7 +12,7 @@ const dictionary = require('../resources/dict.json');
 
 client.login(token);
 
-function isRegisteredChannel(id) {
+function isRegisteredChannel(id: string) {
     return id === registeredChannelID;
 }
 
@@ -23,7 +23,7 @@ const StateEventActions :
     {[key: string] : (msg: Message, gameState: GameState, ...args: any[]) => void} 
     = {
 
-    "lobby" : createEventAction(StateEvent.LOBBY, (msg, gameState, ...args) => {
+    "lobby" : createEventAction(StateEvent.LOBBY, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         console.log("lobby started");
         msg.channel.send("Lobby is now open to _!join_.");
@@ -31,7 +31,7 @@ const StateEventActions :
         // fail
         console.log("action unavailable");
     }),
-    "join" : createEventAction(StateEvent.JOIN, (msg: Message, gameState, ...args) => {
+    "join" : createEventAction(StateEvent.JOIN, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         gameState.addPlayer(msg.author)
             ? msg.channel.send(msg.author.username + " has joined.")
@@ -39,14 +39,14 @@ const StateEventActions :
     }, () => {
         // fail
     }),
-    "quit" : createEventAction(StateEvent.QUIT, (msg, gameState: GameState, ...args) => {
+    "quit" : createEventAction(StateEvent.QUIT, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         gameState.reset();
         msg.channel.send("Quitting out, bye bye.")
     }, () => {
         // fail
     }),
-    "submit" : createEventAction(StateEvent.SUBMIT, (msg, gameState: GameState, ...args) => {
+    "submit" : createEventAction(StateEvent.SUBMIT, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         const submittedWord : string = args[0].toUpperCase();
         if(gameState.activeChallenge){
@@ -85,14 +85,14 @@ const StateEventActions :
     }, () => {
         // fail
     }),
-    "start" : createEventAction(StateEvent.START, (msg, gameState: GameState, ...args) => {
+    "start" : createEventAction(StateEvent.START, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         gameState.nextPlayer();
         msg.channel.send("The game has begun. " + gameState.getCurrentPlayerName() + " is up. Start with !submit and a letter.");
     }, () => {
         // fail
     }),
-    "challenge" : createEventAction(StateEvent.CHALLENGE, (msg, gameState, ...args) => {
+    "challenge" : createEventAction(StateEvent.CHALLENGE, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         // still move to next players as submit will check previous player (the challenger)
 
@@ -107,7 +107,7 @@ const StateEventActions :
     }, () => {
         // fail
     }),
-    "return-to-lobby" : createEventAction(StateEvent.RETURN_TO_LOBBY, (msg, gameState, ...args) => {
+    "return-to-lobby" : createEventAction(StateEvent.RETURN_TO_LOBBY, (msg: Message, gameState: GameState, ...args : any[]) => {
         console.log("returning to lobby");
         msg.channel.send("Returning to lobby, !start when ready for another round.");
         // resets word and current player
@@ -148,7 +148,7 @@ client.once('ready', () => {
     console.log('Ready!')
 })
 
-client.on('message', (msg) => {
+client.on('message', (msg: Message) => {
     console.log(msg.content);
 
     if(isRegisteredChannel(msg.channel.id))
@@ -156,7 +156,10 @@ client.on('message', (msg) => {
         if (!msg.content.startsWith(prefix) || msg.author.bot) return;
 
         const args = msg.content.slice(prefix.length).trim().split(' ');
-        const command = args.shift().toLowerCase();
+        const firstArg = args.shift();
+        const command = (firstArg !== undefined)
+                            ? firstArg
+                            : "";
 
         console.log("Command: ", command);
         console.log("Args: ", args);

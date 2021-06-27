@@ -30,7 +30,7 @@ var GameState = /** @class */ (function (_super) {
         _this.initStateMachineState();
         _this.currentPlayer = -1;
         _this.trie = new Trie_1["default"]();
-        wordList.forEach(function (word) { return _this.trie.addWord(word["word"].toUpperCase()); });
+        wordList.forEach(function (word) { return _this.trie.addWord(word.toUpperCase()); });
         _this.activeChallenge = false;
         return _this;
     }
@@ -58,9 +58,6 @@ var GameState = /** @class */ (function (_super) {
         this.addStateTransition(Types_1.StateEvent.SUBMIT, sGameC, sLobby);
         this.addStateTransition(Types_1.StateEvent.RETURN_TO_LOBBY, sGameC, sLobby);
         this.addStateTransition(Types_1.StateEvent.QUIT, sGameC, sDead);
-    };
-    GameState.prototype.getPlayerID = function (index) {
-        return Array.from(this.players.keys())[index];
     };
     GameState.prototype.setWord = function (newWord) {
         newWord = newWord.toUpperCase();

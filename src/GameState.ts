@@ -12,7 +12,7 @@ export class GameState extends StateMachine{
     trie: TrieNode;
     activeChallenge: boolean;
 
-    constructor(wordList)
+    constructor(wordList : Array<string>)
     {
         super();
         this.players = Array<Player>();
@@ -20,7 +20,7 @@ export class GameState extends StateMachine{
         this.initStateMachineState();
         this.currentPlayer=-1;
         this.trie = new TrieNode();
-        wordList.forEach(word => this.trie.addWord(word["word"].toUpperCase()));
+        wordList.forEach(word => this.trie.addWord(word.toUpperCase()));
         this.activeChallenge = false;
     }
 
@@ -57,10 +57,6 @@ export class GameState extends StateMachine{
         this.addStateTransition(StateEvent.QUIT,             sGameC, sDead);
     }
 
-    getPlayerID(index){
-        return Array.from(this.players.keys())[index];
-    }
-
     setWord(newWord: string){
         newWord = newWord.toUpperCase();
         if(isValidNewWord(this.word, newWord)){
@@ -70,7 +66,7 @@ export class GameState extends StateMachine{
         return false;
     }
 
-    isWordInDictionary(word)
+    isWordInDictionary(word: string)
     {
         word = word.toUpperCase();
         return this.trie.contains(word);

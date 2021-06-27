@@ -1,7 +1,7 @@
 import { StateEvent } from "./Types";
 
 export class StateMachine {
-    public activeState: State;
+    activeState: State;
 
     constructor() {
         this.activeState = new State("iState");
@@ -12,8 +12,9 @@ export class StateMachine {
     }
 
     transition(event: StateEvent) {
-        if(this.activeState.transitions.has(event)){
-            this.activeState = this.activeState.transitions.get(event);
+        const toState = this.activeState.transitions.get(event);
+        if(this.activeState.transitions.has(event) && toState !== undefined){
+            this.activeState = toState;
             return true;
         }
         return false;

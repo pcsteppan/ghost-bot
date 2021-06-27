@@ -9,8 +9,9 @@ var StateMachine = /** @class */ (function () {
         from.transitions.set(event, to);
     };
     StateMachine.prototype.transition = function (event) {
-        if (this.activeState.transitions.has(event)) {
-            this.activeState = this.activeState.transitions.get(event);
+        var toState = this.activeState.transitions.get(event);
+        if (this.activeState.transitions.has(event) && toState !== undefined) {
+            this.activeState = toState;
             return true;
         }
         return false;
