@@ -1,6 +1,7 @@
 import TrieNode from "./Trie";
 import { StateMachine, State } from "./StateMachine";
 import { StateEvent } from "./Types";
+import { shuffleArray } from "./Utils";
 
 const dict = require('../resources/dict.json');
 const assert = require('assert');
@@ -141,6 +142,34 @@ describe('StateMachine', () => {
             machine.transition(StateEvent.QUIT);
 
             assert.ok(machine.activeState === stateB);
+        })
+    })
+})
+
+describe('Utils', () => {
+    describe('.shuffleArray', () => {
+        it('contains all the elements that were present in the original array', () => {
+            const arr = [0, 1, 2, 3, 4, 5];
+            const shuffledArray = shuffleArray(arr);
+
+            const allElementsPresentInShuffleArray = arr.filter(el => shuffledArray.includes(el)) && arr.length === shuffledArray.length;
+            assert.ok(allElementsPresentInShuffleArray);
+        })
+
+        it('can handle empty arrays', () => {
+            const arr : Array<any> = [];
+            const shuffledArray = shuffleArray(arr);
+
+            const allElementsPresentInShuffleArray = arr.filter(el => shuffledArray.includes(el)) && arr.length === shuffledArray.length;
+            assert.ok(allElementsPresentInShuffleArray);
+        })
+
+        it('can handle arrays with only one element', () => {
+            const arr = [0];
+            const shuffledArray = shuffleArray(arr);
+
+            const allElementsPresentInShuffleArray = arr.filter(el => shuffledArray.includes(el)) && arr.length === shuffledArray.length;
+            assert.ok(allElementsPresentInShuffleArray);
         })
     })
 })

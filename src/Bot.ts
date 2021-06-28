@@ -1,6 +1,6 @@
 import { Message, User } from "discord.js";
 import { GameState } from "./GameState";
-import { createEventAction } from "./Utils";
+import { createEventAction, shuffleArray } from "./Utils";
 import { StateEvent } from './Types';
 
 const Discord = require('discord.js');
@@ -58,21 +58,21 @@ const StateEventActions :
             const currentPlayer = gameState.getCurrentPlayer();
 
             if(winsChallenge) {
-                previousPlayer.losePoint();
+                previousPlayer?.losePoint();
                 msg.channel.send(submittedWord + " is a valid and real word, nice.")
-                msg.channel.send(previousPlayer.user.username + " loses the challenge, and a point. You're at " + previousPlayer.score + " points.")
+                msg.channel.send(previousPlayer?.user.username + " loses the challenge, and a point. You're at " + previousPlayer?.score + " points.")
             } else {
-                currentPlayer.losePoint();
+                currentPlayer?.losePoint();
                 msg.channel.send(submittedWord + " is not a valid or real word, sorry.")
-                msg.channel.send(currentPlayer.user.username + " loses the challenge, and a point. You're at " + currentPlayer.score + " points.")
+                msg.channel.send(currentPlayer?.user.username + " loses the challenge, and a point. You're at " + currentPlayer?.score + " points.")
             }
             gameState.activeChallenge = false;
             StateEventActions["return-to-lobby"](msg, gameState, ...args);
         }
         else if(gameState.setWord(submittedWord)){
             if(gameState.isWordInDictionary(gameState.word) && gameState.word.length > 4){
-                gameState.getCurrentPlayer().losePoint();
-                msg.channel.send(gameState.getCurrentPlayerName() + " you completed a word! You lose a point. You're at " + gameState.getCurrentPlayer().score + " points.");
+                gameState.getCurrentPlayer()?.losePoint();
+                msg.channel.send(gameState.getCurrentPlayerName() + " you completed a word! You lose a point. You're at " + gameState.getCurrentPlayer()?.score + " points.");
                 StateEventActions["return-to-lobby"](msg, gameState, ...args);
             }
             else {
@@ -97,8 +97,8 @@ const StateEventActions :
         // still move to next players as submit will check previous player (the challenger)
 
         const challengingPlayerName = gameState.getCurrentPlayerName();
-        gameState.nextPlayer();
-        const challengedPlayerName = gameState.getCurrentPlayerName();
+        // gameState.nextPlayer();
+        const challengedPlayerName = gameState.getPreviousPlayer().user.username;
 
         msg.channel.send(challengingPlayerName + " is challenging " + challengedPlayerName + ".");
         msg.channel.send(challengedPlayerName + " !submit the word that you had in mind (it must be real, at least five letters long, and contain the partial word).")
@@ -114,6 +114,12 @@ const StateEventActions :
         gameState.returnToLobby();
     }, () => {
 
+    }),
+    "shuffle-order" : createEventAction(StateEvent.SHUFFLE_ORDER, (msg: Message, gameState: GameState, ...args : any[]) => {
+        gameState.players = shuffleArray(gameState.players);
+        queries["player-order"](msg, gameState, ...args);
+    }, () => {
+
     })
 
 
@@ -125,7 +131,7 @@ const queries :
     = {
 
     "current-player" : (msg, gameState, ...args) => {
-        const currentPlayerUserName = gameState.getCurrentPlayer().user.username;
+        const currentPlayerUserName = gameState.getCurrentPlayerName();
         msg.channel.send(currentPlayerUserName);
     },
     "current-gamestate" : (msg, gameState, ...args) => {
@@ -136,10 +142,24 @@ const queries :
         const currentWord = gameState.word;
         msg.channel.send(`**${currentWord}**`);
     },
-    "scores" : (msg, gameState, ...args) => {
+    "score" : (msg, gameState, ...args) => {
         const scores = gameState.players.map(player => `${player.user.username}: ${player.score}`).join('\n');
         msg.channel.send(scores);
+    },
+    "help" : (msg, gameState, ...args) => {
+        const transitionsPossible = Array.from(gameState.activeState.transitions.keys())
+                                        .map(key => key.toString())
+                                        .concat(Object.keys(queries))
+                                        .map(el => "!" + el)
+                                        .join("\n");
+        msg.channel.send(transitionsPossible);
+    },
+    "player-order" : (msg, gameState, ...args) => {
+        const playerOrder = gameState.players.map(player => player.user.username).join(" -> ");
+        // include queries as well
+        msg.channel.send(playerOrder);
     }
+    // turn order
 
 
 }

@@ -37,9 +37,10 @@ export class GameState extends StateMachine{
         this.addStateTransition(StateEvent.LOBBY,            sDead, sEmptyLobby);
 
         this.addStateTransition(StateEvent.JOIN,             sEmptyLobby, sLobby);
-        this.addStateTransition(StateEvent.QUIT,            sEmptyLobby, sDead);
+        this.addStateTransition(StateEvent.QUIT,             sEmptyLobby, sDead);
 
         this.addStateTransition(StateEvent.JOIN,             sLobby, sLobby);
+        this.addStateTransition(StateEvent.SHUFFLE_ORDER,    sLobby, sLobby);
         this.addStateTransition(StateEvent.START,            sLobby, sGameA);
         this.addStateTransition(StateEvent.QUIT,             sLobby, sDead);
 
@@ -77,20 +78,34 @@ export class GameState extends StateMachine{
         this.currentPlayer %= this.players.length;
     }
 
+    previousPlayer(){
+        this.currentPlayer = (this.currentPlayer === 0) 
+                                ? (this.players.length - 1)
+                                : (this.currentPlayer - 1);
+    }
+
     // add check in the event these are called when current player is -1 (unset, out-of-game default)
     getPreviousPlayer() {
+        if(this.currentPlayer === -1)
+            return null;
         const previousPlayerIndex = (this.currentPlayer === 0) 
-                                        ? (this.players.length-1) 
+                                        ? (this.players.length - 1) 
                                         : (this.currentPlayer - 1);
         return this.players[previousPlayerIndex];
     }
 
     getCurrentPlayer(){
+        if(this.currentPlayer === -1)
+            return null;
         return this.players[this.currentPlayer];
     }
 
     getCurrentPlayerName(){
-        return this.players[this.currentPlayer].user.username;
+        const currentPlayer = this.getCurrentPlayer();
+        if(currentPlayer === null)
+            return "No one is the current player yet";
+        else
+            return currentPlayer.user.username;
     }
 
     addPlayer(user : User) {

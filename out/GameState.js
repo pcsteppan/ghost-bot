@@ -46,6 +46,7 @@ var GameState = /** @class */ (function (_super) {
         this.addStateTransition(Types_1.StateEvent.JOIN, sEmptyLobby, sLobby);
         this.addStateTransition(Types_1.StateEvent.QUIT, sEmptyLobby, sDead);
         this.addStateTransition(Types_1.StateEvent.JOIN, sLobby, sLobby);
+        this.addStateTransition(Types_1.StateEvent.SHUFFLE_ORDER, sLobby, sLobby);
         this.addStateTransition(Types_1.StateEvent.START, sLobby, sGameA);
         this.addStateTransition(Types_1.StateEvent.QUIT, sLobby, sDead);
         this.addStateTransition(Types_1.StateEvent.SUBMIT, sGameA, sGameB);
@@ -75,18 +76,31 @@ var GameState = /** @class */ (function (_super) {
         this.currentPlayer += 1;
         this.currentPlayer %= this.players.length;
     };
+    GameState.prototype.previousPlayer = function () {
+        this.currentPlayer = (this.currentPlayer === 0)
+            ? (this.players.length - 1)
+            : (this.currentPlayer - 1);
+    };
     // add check in the event these are called when current player is -1 (unset, out-of-game default)
     GameState.prototype.getPreviousPlayer = function () {
+        if (this.currentPlayer === -1)
+            return null;
         var previousPlayerIndex = (this.currentPlayer === 0)
             ? (this.players.length - 1)
             : (this.currentPlayer - 1);
         return this.players[previousPlayerIndex];
     };
     GameState.prototype.getCurrentPlayer = function () {
+        if (this.currentPlayer === -1)
+            return null;
         return this.players[this.currentPlayer];
     };
     GameState.prototype.getCurrentPlayerName = function () {
-        return this.players[this.currentPlayer].user.username;
+        var currentPlayer = this.getCurrentPlayer();
+        if (currentPlayer === null)
+            return "No one is the current player yet";
+        else
+            return currentPlayer.user.username;
     };
     GameState.prototype.addPlayer = function (user) {
         if (this.players.filter(function (p) { return p.user === user; }).length === 0) {

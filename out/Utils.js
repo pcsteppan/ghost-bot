@@ -5,7 +5,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 exports.__esModule = true;
-exports.createEventAction = exports.isAlpha = exports.isValidNewWord = void 0;
+exports.shuffleArray = exports.createEventAction = exports.isAlpha = exports.isValidNewWord = void 0;
 function isValidNewWord(oldWord, newWord) {
     return newWord.includes(oldWord) && newWord.length == oldWord.length + 1 && isAlpha(newWord);
 }
@@ -25,3 +25,20 @@ function createEventAction(event, success, fail) {
     };
 }
 exports.createEventAction = createEventAction;
+// Durstenfeld shuffle
+function shuffleArray(arr) {
+    var arrCopy = __spreadArray([], arr);
+    for (var i = arrCopy.length - 1; i >= 0; i--) {
+        var index = Math.floor(Math.random() * (i + 1));
+        if (index === i) {
+            continue;
+        }
+        else {
+            var temp = arrCopy[index];
+            arrCopy[index] = arrCopy[i];
+            arrCopy[i] = temp;
+        }
+    }
+    return arrCopy;
+}
+exports.shuffleArray = shuffleArray;
