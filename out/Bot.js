@@ -9,13 +9,13 @@ var GameState_1 = require("./GameState");
 var Utils_1 = require("./Utils");
 var Types_1 = require("./Types");
 var Discord = require('discord.js');
-var _a = require('../resources/config.json'), token = _a.token, prefix = _a.prefix, registeredChannelID = _a.registeredChannelID;
+var _a = require('../resources/config.json'), token = _a.token, prefix = _a.prefix, registeredChannelIDs = _a.registeredChannelIDs;
 var client = new Discord.Client();
 var dictionary = require('../resources/dict.json');
 "use strict";
 client.login(token);
 function isRegisteredChannel(id) {
-    return id === registeredChannelID;
+    return registeredChannelIDs.includes(id);
 }
 var gameState = new GameState_1.GameState(dictionary);
 // mutate game state
@@ -33,6 +33,18 @@ var StateEventActions = {
         console.log("action unavailable");
     }),
     "join": Utils_1.createEventAction(Types_1.StateEvent.JOIN, function (msg, gameState) {
+        var args = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            args[_i - 2] = arguments[_i];
+        }
+        // success
+        gameState.addPlayer(msg.author)
+            ? msg.channel.send(msg.author.username + " has joined.")
+            : msg.channel.send(msg.author.username + " has already joined.");
+    }, function () {
+        // fail
+    }),
+    "debug--addPlayer": Utils_1.createEventAction(Types_1.StateEvent.JOIN, function (msg, gameState) {
         var args = [];
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
@@ -113,17 +125,19 @@ var StateEventActions = {
     "challenge": Utils_1.createEventAction(Types_1.StateEvent.CHALLENGE, function (msg, gameState) {
         // success
         // still move to next players as submit will check previous player (the challenger)
+        var _a;
         var args = [];
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
         }
         var challengingPlayerName = gameState.getCurrentPlayerName();
         // gameState.nextPlayer();
-        var challengedPlayerName = gameState.getPreviousPlayer().user.username;
+        var challengedPlayerName = (_a = gameState.getPreviousPlayer()) === null || _a === void 0 ? void 0 : _a.user.username;
         msg.channel.send(challengingPlayerName + " is challenging " + challengedPlayerName + ".");
         msg.channel.send(challengedPlayerName + " !submit the word that you had in mind (it must be real, at least five letters long, and contain the partial word).");
         gameState.activeChallenge = true;
-        gameState.nextPlayer();
+        // gameState.nextPlayer();
+        gameState.previousPlayer();
     }, function () {
         // fail
     }),
@@ -156,6 +170,8 @@ var queries = {
             args[_i - 2] = arguments[_i];
         }
         var currentPlayerUserName = gameState.getCurrentPlayerName();
+        currentPlayerUserName = currentPlayerUserName === undefined
+            ? "None" : currentPlayerUserName;
         msg.channel.send(currentPlayerUserName);
     },
     "current-gamestate": function (msg, gameState) {

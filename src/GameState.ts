@@ -18,7 +18,7 @@ export class GameState extends StateMachine{
         this.players = Array<Player>();
         this.word = "";
         this.initStateMachineState();
-        this.currentPlayer=-1;
+        this.currentPlayer = -1;
         this.trie = new TrieNode();
         wordList.forEach(word => this.trie.addWord(word.toUpperCase()));
         this.activeChallenge = false;
@@ -102,10 +102,7 @@ export class GameState extends StateMachine{
 
     getCurrentPlayerName(){
         const currentPlayer = this.getCurrentPlayer();
-        if(currentPlayer === null)
-            return "No one is the current player yet";
-        else
-            return currentPlayer.user.username;
+        return currentPlayer?.user.username;
     }
 
     addPlayer(user : User) {

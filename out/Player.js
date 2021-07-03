@@ -1,7 +1,9 @@
 "use strict";
 exports.__esModule = true;
 var Player = /** @class */ (function () {
-    function Player(user) {
+    function Player(user, customName) {
+        if (customName === void 0) { customName = ""; }
+        this.name = (customName == "" ? user.username : customName);
         this.user = user;
         this.score = 0;
     }

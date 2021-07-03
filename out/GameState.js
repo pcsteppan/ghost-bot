@@ -97,10 +97,7 @@ var GameState = /** @class */ (function (_super) {
     };
     GameState.prototype.getCurrentPlayerName = function () {
         var currentPlayer = this.getCurrentPlayer();
-        if (currentPlayer === null)
-            return "No one is the current player yet";
-        else
-            return currentPlayer.user.username;
+        return currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.user.username;
     };
     GameState.prototype.addPlayer = function (user) {
         if (this.players.filter(function (p) { return p.user === user; }).length === 0) {

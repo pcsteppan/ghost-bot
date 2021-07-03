@@ -174,3 +174,17 @@ describe('Utils', () => {
     })
 })
 
+describe('GameState', () => {
+    describe('addPlayer', () => {
+
+    })
+    describe('', () => {
+        
+    })
+    describe('!start', () => {
+        
+    })
+    describe('!join', () => {
+        
+    })
+})

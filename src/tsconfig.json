@@ -7,10 +7,21 @@
         "lib": ["es2020"],
         "module": "commonjs",
         "target": "es2020",
-        "outDir": "./out",
-        "strict": false,
+        "outDir": "../out/",
+        "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true
-    }
+    },
+
+    "files": [
+        "Bot.ts",
+        "GameState.ts",
+        "Player.ts",
+        "StateMachine.ts",
+        "Test.ts",
+        "Trie.ts",
+        "Types.ts",
+        "Utils.ts"
+    ]
   }

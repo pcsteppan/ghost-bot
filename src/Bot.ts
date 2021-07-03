@@ -4,7 +4,7 @@ import { createEventAction, shuffleArray } from "./Utils";
 import { StateEvent } from './Types';
 
 const Discord = require('discord.js');
-const {token, prefix, registeredChannelID} = require('../resources/config.json');
+const {token, prefix, registeredChannelIDs} = require('../resources/config.json');
 const client = new Discord.Client();
 const dictionary = require('../resources/dict.json');
 
@@ -13,7 +13,7 @@ const dictionary = require('../resources/dict.json');
 client.login(token);
 
 function isRegisteredChannel(id: string) {
-    return id === registeredChannelID;
+    return registeredChannelIDs.includes(id);
 }
 
 const gameState = new GameState(dictionary);
@@ -32,6 +32,14 @@ const StateEventActions :
         console.log("action unavailable");
     }),
     "join" : createEventAction(StateEvent.JOIN, (msg: Message, gameState: GameState, ...args : any[]) => {
+        // success
+        gameState.addPlayer(msg.author)
+            ? msg.channel.send(msg.author.username + " has joined.")
+            : msg.channel.send(msg.author.username + " has already joined.")
+    }, () => {
+        // fail
+    }),
+    "debug--addPlayer" : createEventAction(StateEvent.JOIN, (msg: Message, gameState: GameState, ...args : any[]) => {
         // success
         gameState.addPlayer(msg.author)
             ? msg.channel.send(msg.author.username + " has joined.")
@@ -98,12 +106,13 @@ const StateEventActions :
 
         const challengingPlayerName = gameState.getCurrentPlayerName();
         // gameState.nextPlayer();
-        const challengedPlayerName = gameState.getPreviousPlayer().user.username;
+        const challengedPlayerName = gameState.getPreviousPlayer()?.user.username;
 
         msg.channel.send(challengingPlayerName + " is challenging " + challengedPlayerName + ".");
         msg.channel.send(challengedPlayerName + " !submit the word that you had in mind (it must be real, at least five letters long, and contain the partial word).")
         gameState.activeChallenge = true;
-        gameState.nextPlayer();
+        // gameState.nextPlayer();
+        gameState.previousPlayer();
     }, () => {
         // fail
     }),
@@ -121,8 +130,6 @@ const StateEventActions :
     }, () => {
 
     })
-
-
 }
 
 // do not mutate game state
@@ -131,7 +138,9 @@ const queries :
     = {
 
     "current-player" : (msg, gameState, ...args) => {
-        const currentPlayerUserName = gameState.getCurrentPlayerName();
+        let currentPlayerUserName = gameState.getCurrentPlayerName();
+        currentPlayerUserName = currentPlayerUserName === undefined 
+            ? "None" : currentPlayerUserName;
         msg.channel.send(currentPlayerUserName);
     },
     "current-gamestate" : (msg, gameState, ...args) => {
